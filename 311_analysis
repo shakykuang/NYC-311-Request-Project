@@ -10,7 +10,10 @@ import pandas as pd
 from datetime import datetime
 import numpy as np
 import matplotlib.pyplot as plt
-
+from matplotlib import rcParams
+rcParams['font.family'] = 'sans-serif'
+rcParams['font.sans-serif'] = ['Tahoma']
+plt.style.use('seaborn-colorblind')
 
 #Importing the CSV
 
@@ -81,64 +84,73 @@ hr['cr_hr'] = hr['cr_dt'].apply(lambda x: int(format(x, "%H"))*60 + int(format(x
 # Define a function to return the period of time 
 def DayTime(x):
     if x >= 0 and x <1*60 :
-        daytime = '(24) 12AM - 1AM'
+        daytime = '(01) 12AM - 1AM'
     elif x < 2*60:
-        daytime = '(23) 1AM - 2AM'
+        daytime = '(02) 1AM - 2AM'
     elif x < 3*60:
-        daytime = '(22) 2AM - 3AM'
+        daytime = '(03) 2AM - 3AM'
     elif x < 4*60:
-        daytime = '(21) 3AM - 4AM'
+        daytime = '(04) 3AM - 4AM'
     elif x < 5*60:
-        daytime = '(20) 4AM - 5AM'        
+        daytime = '(05) 4AM - 5AM'        
     elif x < 6*60:
-        daytime = '(19) 5AM - 6AM'
+        daytime = '(06) 5AM - 6AM'
     elif x < 7*60:
-        daytime = '(18) 6AM - 7AM'
+        daytime = '(07) 6AM - 7AM'
     elif x < 8*60:
-        daytime = '(17) 7AM - 8AM'
+        daytime = '(08) 7AM - 8AM'
     elif x < 9*60:
-        daytime = '(16) 8AM - 9AM'
+        daytime = '(09) 8AM - 9AM'
     elif x < 10*60:
-        daytime = '(15) 9AM - 10AM'
+        daytime = '(10) 9AM - 10AM'
     elif x < 11*60:
-        daytime = '(14) 10AM - 11AM'
+        daytime = '(11) 10AM - 11AM'
     elif x < 12*60:
-        daytime = '(13) 11AM - 12PM'
+        daytime = '(12) 11AM - 12PM'
     elif x < 13*60:
-        daytime = '(12) 12PM - 1PM'
+        daytime = '(13) 12PM - 1PM'
     elif x < 14*60:
-        daytime = '(11) 1PM - 2PM'
+        daytime = '(14) 1PM - 2PM'
     elif x < 15*60:
-        daytime = '(10) 2PM - 3PM'        
+        daytime = '(15) 2PM - 3PM'        
     elif x < 16*60:
-        daytime = '(09) 3PM - 4PM'
+        daytime = '(16) 3PM - 4PM'
     elif x < 17*60:
-        daytime = '(08) 4PM - 5PM'
+        daytime = '(17) 4PM - 5PM'
     elif x < 18*60:
-        daytime = '(07) 5PM - 6PM'
+        daytime = '(18) 5PM - 6PM'
     elif x < 19*60:
-        daytime = '(06) 6PM - 7PM'
+        daytime = '(19) 6PM - 7PM'
     elif x < 20*60:
-        daytime = '(05) 7PM - 8PM'
+        daytime = '(20) 7PM - 8PM'
     elif x < 21*60:
-        daytime = '(04) 8PM - 9PM'        
+        daytime = '(21) 8PM - 9PM'        
     elif x < 22*60:
-        daytime = '(03) 9PM - 10PM'
+        daytime = '(22) 9PM - 10PM'
     elif x < 23*60:
-        daytime = '(02) 10PM - 11PM'  
+        daytime = '(23) 10PM - 11PM'  
     elif x < 24*60:
-        daytime = '(01) 11PM - 12AM'
+        daytime = '(24) 11PM - 12AM'
 
     return daytime 
 
 # Apply the "DateTime" function to generate a new column identify the time period
 hr['day'] = hr['cr_hr'].apply(DayTime)
-
 # day_pattern df: count of complaints by period of time 
-hr['day'].value_counts().sort_index().plot(kind='barh', figsize=(8, 6))
+day_pattern = hr['day'].value_counts()
+
+
+"""
+FIGURE 1: COMPLAINTS BY HOUR
+"""
+print("\nFIGURE 1: Number of Complaints by Hour")
+
+# Plot Complaint Frequency by Hour 
+fig1 = hr['day'].value_counts().sort_index(ascending=True).plot(kind='line', figsize=(8, 6))
 plt.xlabel("Number of 311 Complaints", labelpad=14)
-plt.ylabel("Time Period", labelpad=14)
-plt.title("Peak Hours of Complaints", y=1.02)
+plt.ylabel("Complaint Issues", labelpad=14)
+plt.title("Complaints by Hour", y=1.02, color="midnightblue",fontsize = 18)
+plt.savefig('fig1.png')
 
 
 
@@ -200,11 +212,21 @@ hr['issue'].value_counts()
 
 
 
+"""
+FIGURE 2: MOST COMMON COMPLAINTS
+"""
+print("\nFIGURE 2: Most Common Complaint Issues")
+
+
 # Plot major issues 
-hr['issue'].value_counts().plot(kind='barh', figsize=(8, 6))
-plt.xlabel("Number of 311 Complaints", labelpad=14)
-plt.ylabel("Complaint Issues", labelpad=14)
-plt.title("Most Common Complaints", y=1.02)
+plot_issues = hr['issue'].value_counts().plot(kind='barh', figsize=(8, 6),color="lightsteelblue")
+plt.xlabel("Number of 311 Complaints", labelpad=20)
+plt.ylabel("Complaint Issues", labelpad=20)
+plt.title("Most Common Complaint Issues", y=1.02, color = "midnightblue", fontsize = 18)
+
+plt.savefig('fig2.png')
+
+
 
 
 
@@ -213,12 +235,25 @@ print("\nTASK 5: Major Complaint Issues During Peak Hours")
 print("===========================================")
 
 # Morning Peak Hour Causes 
-peakhr = hr[hr['day'] == '(15) 9AM - 10AM'] # or hr['day'] == '(02) 10PM - 11PM')]
-peakhr['issue'].value_counts()
+peakhr = hr[hr['day'] == '(10) 9AM - 10AM'] # or hr['day'] == '(02) 10PM - 11PM')]
+am = peakhr['issue'].value_counts()[0:3]
+amplot = am.plot(kind="barh", color="sandybrown")
+plt.xlabel("Number of Complaints")
+plt.ylabel("Complaint Issues")
+plt.title("Top 3 Complaints of Morning Peak Hour (9AM-10AM)", 
+          color="peru", fontsize=18)
+plt.savefig('fig3.png')
+
 
 # Evening Peak Hour Causes 
-peakhr2 = hr[hr['day'] == '(02) 10PM - 11PM']
-peakhr2['issue'].value_counts()
+peakhr2 = hr[hr['day'] == '(23) 10PM - 11PM']
+pm = peakhr2['issue'].value_counts()[0:3]
+pm.plot(kind="barh", color = "rosybrown")
+plt.xlabel("Number of Complaints")
+plt.ylabel("Complaint Issues")
+plt.title("Top 3 Complaints of Evening Peak Hour (10PM-11PM)", 
+          color="maroon", fontsize=18)
+plt.savefig('fig4.png')
 
 
 
@@ -227,29 +262,28 @@ print("\nTASK 6: Water Complaint by Hour")
 print("===========================================")
 
 water = hr[hr['issue'] == 'Heat/Water Related']
-water['day'].value_counts()
-
-# Plot Noise Complaint Time Distribution
-water['day'].value_counts().sort_index().plot(kind='barh', figsize=(8, 6))
-plt.xlabel("Number of 311 Complaints", labelpad=14)
+# Plot Water Complaint Time Distribution
+water['day'].value_counts().sort_index(ascending=True).plot(kind='line', 
+     figsize=(8, 6), color='c')
+plt.xlabel("Number of Complaints", labelpad=14)
 plt.ylabel("Time Period", labelpad=14)
-plt.title("Peak Hours of Heat/Water Complaints", y=1.02)
-
+plt.title("Peak Hours of Heat/Water Complaints", 
+          y=1.02,color='c',fontsize=24)
+plt.savefig('fig5.png')
 
 
 print("\nTASK 7: Noise Complaint by Hour")
 print("===========================================")
 
 noise = hr[hr['issue'] == 'Noise - Residential']
-noise['day'].value_counts()
-
-
 # Plot Noise Complaint Time Distribution
-noise['day'].value_counts().sort_index().plot(kind='barh', figsize=(8, 6))
+noise['day'].value_counts().sort_index().plot(kind='line', 
+     figsize=(8, 6),color='seagreen')
 plt.xlabel("Number of 311 Complaints", labelpad=14)
 plt.ylabel("Time Period", labelpad=14)
-plt.title("Peak Hours of Noise Complaints", y=1.02)
-
+plt.title("Peak Hours of Noise Complaints", 
+          y=1.02, color='seagreen',fontsize=24)
+plt.savefig('fig6.png')
 
 
 print("\nTASK 7: Parking Complaint by Hour")
@@ -257,12 +291,12 @@ print("===========================================")
 
 parking = hr[hr['issue'] == 'Illegal Parking']
 parking['day'].value_counts()
-
-
 # Plot Noise Complaint Time Distribution
-parking['day'].value_counts().sort_index().plot(kind='barh', figsize=(8, 6))
+parking['day'].value_counts().sort_index().plot(kind='line', 
+       figsize=(8, 6),color='darkolivegreen')
 plt.xlabel("Number of 311 Complaints", labelpad=14)
 plt.ylabel("Time Period", labelpad=14)
-plt.title("Peak Hours of Parking Complaints", y=1.02)
-
+plt.title("Peak Hours of Parking Complaints", 
+          y=1.02,color='darkolivegreen',fontsize=24)
+plt.savefig('fig7.png')
 
